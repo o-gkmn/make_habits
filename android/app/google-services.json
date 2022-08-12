@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "691244455043",
+    "project_id": "make-habits-af7a2",
+    "storage_bucket": "make-habits-af7a2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691244455043:android:718f76fd6c748c8f1cb7b6",
+        "android_client_info": {
+          "package_name": "com.example.make_habits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691244455043-kmtlq6phdo6fbsqb66blng3l1af3v54l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Jy-lCXYDrv8LPbxzdedmgRIqlksGS18"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691244455043-kmtlq6phdo6fbsqb66blng3l1af3v54l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

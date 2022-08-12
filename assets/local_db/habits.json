@@ -1,0 +1,59 @@
+[
+    {
+        "id" : 0,
+        "name" : "deneme 1",
+        "daysCount" : 4,
+        "startDay" : "12.10.2002",
+        "endDay" : "15.10.2002",
+        "didUserSucced" : true,
+        "days" : {
+            "12.10.2002" : true,
+            "13.10.2002" : false,
+            "14.10.2002" : true,
+            "15.10.2002" : true 
+        }
+    },
+    {
+        "id" : 1,
+        "name" : "deneme 2",
+        "daysCount" : 3,
+        "startDay" : "12.10.2002",
+        "endDay" : "13.10.2002",
+        "didUserSucced" : false,
+        "days" : {
+            "03.08.2022" : false,
+            "04.08.2022" : true,
+            "05.08.2022" : true
+        }
+    },
+    {
+        "id" : 2,
+        "name" : "deneme 3",
+        "daysCount" : 5,
+        "startDay" : "12.10.2002",
+        "endDay" : "13.10.2002",
+        "didUserSucced" : false,
+        "days" : {
+            "01.08.2022" : false,
+            "02.08.2022" : true,
+            "03.08.2022" : true,
+            "04.08.2022" : true,
+            "05.08.2022" : false
+        }
+    },    {
+        "id" : 3,
+        "name" : "deneme 4",
+        "daysCount" : 6,
+        "startDay" : "12.10.2002",
+        "endDay" : "13.10.2002",
+        "didUserSucced" : false,
+        "days" : {
+            "04.08.2022" : false,
+            "05.08.2022" : true,
+            "06.08.2022" : true,
+            "07.08.2022" : false,
+            "08.08.2022" : true,
+            "09.08.2022" : true
+        }
+    }
+]
