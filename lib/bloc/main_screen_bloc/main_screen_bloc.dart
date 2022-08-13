@@ -11,6 +11,16 @@ part 'main_screen_state.dart';
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   HabitService service;
 
+  String todayString = "";
+  String tommorowString = "";
+  String yesterdayString = "";
+
+  bool todayBool = false;
+  bool tommorowBool = false;
+  bool yesterdayBool = false;
+
+  double percent = 0.0;
+
   MainScreenBloc(this.service) : super(MainScreenInitialState()) {
     on<MainScreenInitialEvent>(_onMainScreenInitialEvent);
     on<MainScreenLoadingEvent>(_onMainScreenLoadingEvent);
@@ -21,14 +31,13 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
 
   void _onMainScreenInitialEvent(
       MainScreenInitialEvent event, Emitter<MainScreenState> emit) async {
-    emit(MainScreenLoadingState());
     try {
       final habitList = await service.getData();
       if (habitList.isEmpty) {
         emit(const MainScreenCheckBoxState(
             "--", "--", "--", false, false, false, 0));
       } else {
-        emit(MainScreenLoadedState(habitList));
+        add(MainScreenLoadingEvent(habitList));
       }
     } catch (e) {
       emit(MainScreenErrorState(e.toString()));
@@ -36,10 +45,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   }
 
   void _onMainScreenLoadingEvent(
-      MainScreenLoadingEvent event, Emitter<MainScreenState> emit) {}
-
-  void _onMainScreenLoadedEvent(
-      MainScreenLoadedEvent event, Emitter<MainScreenState> emit) {
+      MainScreenLoadingEvent event, Emitter<MainScreenState> emit) {
     DateTime today = DateTime.now();
     DateTime yesterday = DateTime.utc(today.year, today.month, today.day - 1);
     DateTime tommorow = DateTime.utc(today.year, today.month, today.day + 1);
@@ -47,14 +53,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     String todayFormat = DateFormat('dd.MM.yyyy').format(today);
     String yesterdayFormat = DateFormat('dd.MM.yyyy').format(yesterday);
     String tommorowFormat = DateFormat('dd.MM.yyyy').format(tommorow);
-
-    String todayString = "";
-    String tommorowString = "";
-    String yesterdayString = "";
-
-    bool todayBool = false;
-    bool tommorowBool = false;
-    bool yesterdayBool = false;
 
     var keys = event.habits[event.index].days.keys;
     var values = event.habits[event.index].days.values;
@@ -98,10 +96,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     }
 
     double percent = trueValues * 100 / values.length;
-
     emit(MainScreenCheckBoxState(todayString, tommorowString, yesterdayString,
         todayBool, tommorowBool, yesterdayBool, percent));
   }
+
+  void _onMainScreenLoadedEvent(
+      MainScreenLoadedEvent event, Emitter<MainScreenState> emit) {}
 
   void _onMainScreenErrorEvent(
       MainScreenErrorEvent event, Emitter<MainScreenState> emit) {}

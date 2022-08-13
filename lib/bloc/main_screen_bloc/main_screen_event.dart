@@ -9,17 +9,17 @@ abstract class MainScreenEvent extends Equatable {
 
 class MainScreenInitialEvent extends MainScreenEvent {}
 
-class MainScreenLoadingEvent extends MainScreenEvent {}
-
-class MainScreenLoadedEvent extends MainScreenEvent {
+class MainScreenLoadingEvent extends MainScreenEvent {
   final List<HabitsModel> habits;
   final int index;
 
-  const MainScreenLoadedEvent(this.habits, {this.index = 0});
+  const MainScreenLoadingEvent(this.habits, {this.index = 0});
 
   @override
   List<Object> get props => [habits, index];
 }
+
+class MainScreenLoadedEvent extends MainScreenEvent {}
 
 class MainScreenErrorEvent extends MainScreenEvent {
   final String e;

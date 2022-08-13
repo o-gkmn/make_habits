@@ -58,7 +58,11 @@ class AppView extends StatelessWidget {
     return MaterialApp(
       theme: theme,
       routes: {
-        "/": (context) => const MainScreen(),
+        "/": (context) => BlocProvider(
+            create: (context) =>
+                MainScreenBloc(RepositoryProvider.of<HabitService>(context))
+                  ..add(MainScreenInitialEvent()),
+            child: const MainScreen()),
         "/List": (context) => const ActionListScreen(),
         "/Adding": (context) => const AddingScreen(),
       },

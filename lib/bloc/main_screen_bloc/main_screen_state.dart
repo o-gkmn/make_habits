@@ -9,17 +9,17 @@ abstract class MainScreenState extends Equatable {
 
 class MainScreenInitialState extends MainScreenState {}
 
-class MainScreenLoadingState extends MainScreenState {}
-
-class MainScreenLoadedState extends MainScreenState {
+class MainScreenLoadingState extends MainScreenState {
   final List<HabitsModel> habits;
   final int index;
 
-  const MainScreenLoadedState(this.habits, {this.index = 0});
+  const MainScreenLoadingState(this.habits, {this.index = 0});
 
   @override
   List<Object> get props => [habits, index];
 }
+
+class MainScreenLoadedState extends MainScreenState {}
 
 class MainScreenErrorState extends MainScreenState {
   final String e;
