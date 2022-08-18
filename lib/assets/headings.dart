@@ -20,3 +20,6 @@ const String initErrorText = "Yüklenirken bir hata oluştu";
 const String unexpectedErrorText = "Beklenmeyen bir hata oluştu";
 const String unknownDateErrorText = "Böyle bir tarih yok";
 const String succesText = "Başarıyla Eklendi";
+
+//Day Tracker
+const String dayTrackerAppTitle = "Gün Takip";

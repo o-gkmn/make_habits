@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:make_habits/bloc/adding_screen_bloc/adding_screen_bloc.dart';
+import 'package:make_habits/bloc/day_tracker_bloc/day_tracker_bloc.dart';
 import 'package:make_habits/bloc/main_screen_bloc/main_screen_bloc.dart';
+import 'package:make_habits/screens/action_list_screen.dart';
 import 'package:make_habits/screens/adding_screen.dart';
+import 'package:make_habits/screens/day_tracker_screen.dart';
 import 'package:make_habits/services/habit_service.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:make_habits/assets/headings.dart';
@@ -19,9 +22,9 @@ class MainScreen extends StatelessWidget {
         body: Padding(
             padding: const EdgeInsets.all(8.0),
             child: BlocProvider(
-              create: (context) =>
-                  MainScreenBloc(RepositoryProvider.of<HabitService>(context))
-                    ..add(MainScreenInitialEvent()),
+              create: (context) => MainScreenBloc(
+                  RepositoryProvider.of<HabitService>(context))
+                ..add(MainScreenInitialEvent(index: ActionListScreen.index)),
               child: const MainScreenForm(),
             )));
   }
@@ -65,7 +68,7 @@ class MainScreenForm extends StatelessWidget {
           ]),
           const SizedBox(height: 15.0),
           Row(children: [
-            _HowManyDaysButton(),
+            _DaysTrackerButton(),
             const Spacer(flex: 1),
             _Button4(),
           ]),
@@ -167,23 +170,34 @@ class _ActionListButton extends StatelessWidget {
       builder: (context, state) {
         return ElevatedButton(
             style: ElevatedButton.styleFrom(minimumSize: const Size(155, 50)),
-            onPressed: () => Navigator.pushNamed(context, "/List"),
+            onPressed: () => Navigator.popAndPushNamed(context, "/List"),
             child: const Text(mainScreenButton2));
       },
     );
   }
 }
 
-class _HowManyDaysButton extends StatelessWidget {
+class _DaysTrackerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainScreenBloc, MainScreenState>(
         builder: (context, state) {
       return ElevatedButton(
           style: ElevatedButton.styleFrom(minimumSize: const Size(155, 50)),
-          onPressed: () {},
+          onPressed: () {
+            pushDayTrackerPage(context);
+          },
           child: const Text(mainScreenButton3));
     });
+  }
+
+  void pushDayTrackerPage(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: ((context) => BlocProvider(
+            create: (context) => DayTrackerBloc(
+                RepositoryProvider.of<HabitService>(context),
+                ActionListScreen.index),
+            child: const DayTrackerScreen()))));
   }
 }
 

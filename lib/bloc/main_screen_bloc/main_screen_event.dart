@@ -7,7 +7,14 @@ abstract class MainScreenEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class MainScreenInitialEvent extends MainScreenEvent {}
+class MainScreenInitialEvent extends MainScreenEvent {
+  final int index;
+
+  const MainScreenInitialEvent({this.index = 0});
+
+  @override
+  List<Object> get props => [index];
+}
 
 class MainScreenLoadingEvent extends MainScreenEvent {
   final List<HabitsModel> habits;

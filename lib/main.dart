@@ -8,6 +8,7 @@ import 'package:make_habits/bloc/adding_screen_bloc/adding_screen_bloc.dart';
 import 'package:make_habits/bloc/main_screen_bloc/main_screen_bloc.dart';
 import 'package:make_habits/screens/action_list_screen.dart';
 import 'package:make_habits/screens/adding_screen.dart';
+import 'package:make_habits/screens/day_tracker_screen.dart';
 import 'package:make_habits/screens/main_screen.dart';
 import 'package:make_habits/services/habit_service.dart';
 
@@ -61,10 +62,11 @@ class AppView extends StatelessWidget {
         "/": (context) => BlocProvider(
             create: (context) =>
                 MainScreenBloc(RepositoryProvider.of<HabitService>(context))
-                  ..add(MainScreenInitialEvent()),
+                  ..add(const MainScreenInitialEvent()),
             child: const MainScreen()),
         "/List": (context) => const ActionListScreen(),
         "/Adding": (context) => const AddingScreen(),
+        "/DayTracker": (context) => const DayTrackerScreen(),
       },
       initialRoute: "/",
     );

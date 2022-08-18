@@ -37,7 +37,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         emit(const MainScreenCheckBoxState(
             "--", "--", "--", false, false, false, 0));
       } else {
-        add(MainScreenLoadingEvent(habitList));
+        add(MainScreenLoadingEvent(habitList, index: event.index));
       }
     } catch (e) {
       emit(MainScreenErrorState(e.toString()));
@@ -47,12 +47,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   void _onMainScreenLoadingEvent(
       MainScreenLoadingEvent event, Emitter<MainScreenState> emit) {
     DateTime today = DateTime.now();
-    DateTime yesterday = DateTime.utc(today.year, today.month, today.day - 1);
-    DateTime tommorow = DateTime.utc(today.year, today.month, today.day + 1);
-
     String todayFormat = DateFormat('dd.MM.yyyy').format(today);
-    String yesterdayFormat = DateFormat('dd.MM.yyyy').format(yesterday);
-    String tommorowFormat = DateFormat('dd.MM.yyyy').format(tommorow);
 
     var keys = event.habits[event.index].days.keys;
     var values = event.habits[event.index].days.values;
@@ -63,7 +58,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         todayString = keys.elementAt(i);
         todayBool = values.elementAt(i);
 
-        if (i - 1 >= 0 && yesterdayFormat == keys.elementAt(i - 1)) {
+        if (i - 1 >= 0) {
           yesterdayString = keys.elementAt(i - 1);
           yesterdayBool = values.elementAt(i - 1);
         } else {
@@ -71,7 +66,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           yesterdayBool = false;
         }
 
-        if (i + 1 < keys.length && tommorowFormat == keys.elementAt(i + 1)) {
+        if (i + 1 < keys.length) {
           tommorowString = keys.elementAt(i + 1);
           tommorowBool = values.elementAt(i + 1);
         } else {

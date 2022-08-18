@@ -73,7 +73,7 @@ class AddingScreenBloc extends Bloc<AddingScreenEvent, AddingScreenState> {
     int lastId;
     Map<String, bool> days = {};
 
-    for (int i = 0; i < dayCount; ++i) {
+    for (int i = 0; i <= dayCount; ++i) {
       String date = DateFormat('dd.MM.yyyy')
           .format(formatFirstDate.add(Duration(days: i)));
       days[date] = false;
