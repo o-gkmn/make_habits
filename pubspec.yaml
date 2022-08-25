@@ -30,14 +30,10 @@ dependencies:
   flutter:
     sdk: flutter
   json_theme:
-  percent_indicator:  
-  json_annotation:
+  percent_indicator:
+  equatable: ^2.0.5
   flutter_bloc: ^8.0.1
-  equatable: ^2.0.3
-  path_provider: ^2.0.11
-  path:
   flutter_slidable:
-  shared_preferences: ^2.0.15
 
   local_storage_habits_api:
     path: packages/local_storage_habits_api
@@ -68,7 +64,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/theme.json
-    - assets/local_db/habits.json
   fonts:
     - family: ABeeZee_regular
       fonts:

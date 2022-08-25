@@ -1,8 +1,7 @@
+import 'package:equatable/equatable.dart';
 import 'package:habit_repository/habit_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:bloc/bloc.dart';
-
-import 'package:equatable/equatable.dart';
 
 part 'main_screen_event.dart';
 part 'main_screen_state.dart';

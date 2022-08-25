@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'package:equatable/equatable.dart';
 import 'package:habit_repository/habit_repository.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:make_habits/assets/headings.dart';
 
 part 'adding_screen_event.dart';
