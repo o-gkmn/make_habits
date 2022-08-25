@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habit_repository/habit_repository.dart';
 import 'package:make_habits/bloc/adding_screen_bloc/adding_screen_bloc.dart';
 import 'package:make_habits/bloc/day_tracker_bloc/day_tracker_bloc.dart';
 import 'package:make_habits/bloc/main_screen_bloc/main_screen_bloc.dart';
 import 'package:make_habits/screens/action_list_screen.dart';
 import 'package:make_habits/screens/adding_screen.dart';
 import 'package:make_habits/screens/day_tracker_screen.dart';
-import 'package:make_habits/services/habit_service.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:make_habits/assets/headings.dart';
 
@@ -17,15 +17,15 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text(appName)),
-        body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: BlocProvider(
-              create: (context) => MainScreenBloc(
-                  RepositoryProvider.of<HabitService>(context))
-                ..add(MainScreenInitialEvent(index: ActionListScreen.index)),
-              child: const MainScreenForm(),
+    return BlocProvider(
+        create: (context) =>
+            MainScreenBloc(RepositoryProvider.of<HabitRepository>(context))
+              ..add(MainScreenInitialEvent(index: ActionListScreen.onTapIndex)),
+        child: Scaffold(
+            appBar: AppBar(title: const Text(appName)),
+            body: const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: MainScreenForm(),
             )));
   }
 }
@@ -156,9 +156,9 @@ class _AddingScreenButton extends StatelessWidget {
   void pushAddPage(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
         builder: ((context) => BlocProvider(
-            create: (context) =>
-                AddingScreenBloc(RepositoryProvider.of<HabitService>(context))
-                  ..add(AddingScreenInitialEvent()),
+            create: (context) => AddingScreenBloc(
+                RepositoryProvider.of<HabitRepository>(context))
+              ..add(AddingScreenInitialEvent()),
             child: const AddingScreen()))));
   }
 }
@@ -195,8 +195,8 @@ class _DaysTrackerButton extends StatelessWidget {
     Navigator.of(context).push(MaterialPageRoute(
         builder: ((context) => BlocProvider(
             create: (context) => DayTrackerBloc(
-                RepositoryProvider.of<HabitService>(context),
-                ActionListScreen.index),
+                RepositoryProvider.of<HabitRepository>(context),
+                ActionListScreen.onTapIndex),
             child: const DayTrackerScreen()))));
   }
 }

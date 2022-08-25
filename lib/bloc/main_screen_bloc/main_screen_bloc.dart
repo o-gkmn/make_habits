@@ -1,15 +1,14 @@
+import 'package:habit_repository/habit_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:bloc/bloc.dart';
 
 import 'package:equatable/equatable.dart';
-import 'package:make_habits/modals/habits_model.dart';
-import 'package:make_habits/services/habit_service.dart';
 
 part 'main_screen_event.dart';
 part 'main_screen_state.dart';
 
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
-  HabitService service;
+  HabitRepository service;
 
   String todayString = "";
   String tommorowString = "";
@@ -24,24 +23,23 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   MainScreenBloc(this.service) : super(MainScreenInitialState()) {
     on<MainScreenInitialEvent>(_onMainScreenInitialEvent);
     on<MainScreenLoadingEvent>(_onMainScreenLoadingEvent);
-    on<MainScreenLoadedEvent>(_onMainScreenLoadedEvent);
-    on<MainScreenErrorEvent>(_onMainScreenErrorEvent);
-    on<MainScreenCheckBoxEvent>(_onMainScrenCheckBoxEvent);
   }
 
   void _onMainScreenInitialEvent(
       MainScreenInitialEvent event, Emitter<MainScreenState> emit) async {
-    try {
-      final habitList = await service.getData();
-      if (habitList.isEmpty) {
-        emit(const MainScreenCheckBoxState(
-            "--", "--", "--", false, false, false, 0));
-      } else {
-        add(MainScreenLoadingEvent(habitList, index: event.index));
+    final habitList = service.getHabits();
+    await habitList.forEach((element) {
+      try {
+        if (element.isEmpty) {
+          emit(const MainScreenCheckBoxState(
+              "NaN", "NaN", "NaN", false, false, false, 0));
+        } else {
+          add(MainScreenLoadingEvent(element, index: event.index));
+        }
+      } catch (e) {
+        emit(MainScreenErrorState(e.toString()));
       }
-    } catch (e) {
-      emit(MainScreenErrorState(e.toString()));
-    }
+    });
   }
 
   void _onMainScreenLoadingEvent(
@@ -94,13 +92,4 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     emit(MainScreenCheckBoxState(todayString, tommorowString, yesterdayString,
         todayBool, tommorowBool, yesterdayBool, percent));
   }
-
-  void _onMainScreenLoadedEvent(
-      MainScreenLoadedEvent event, Emitter<MainScreenState> emit) {}
-
-  void _onMainScreenErrorEvent(
-      MainScreenErrorEvent event, Emitter<MainScreenState> emit) {}
-
-  void _onMainScrenCheckBoxEvent(
-      MainScreenCheckBoxEvent event, Emitter<MainScreenState> emit) {}
 }

@@ -10,7 +10,7 @@ abstract class MainScreenState extends Equatable {
 class MainScreenInitialState extends MainScreenState {}
 
 class MainScreenLoadingState extends MainScreenState {
-  final List<HabitsModel> habits;
+  final List<Habit> habits;
   final int index;
 
   const MainScreenLoadingState(this.habits, {this.index = 0});

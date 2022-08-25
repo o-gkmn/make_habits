@@ -9,10 +9,6 @@ abstract class AddingScreenEvent extends Equatable {
 
 class AddingScreenInitialEvent extends AddingScreenEvent {}
 
-class AddingScreenLoadingEvent extends AddingScreenEvent {}
-
-class AddingScreenLoadedEvent extends AddingScreenEvent {}
-
 class AddingScreenErrorEvent extends AddingScreenEvent {}
 
 class AddingScreenSaveEvent extends AddingScreenEvent {

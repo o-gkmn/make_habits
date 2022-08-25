@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habit_repository/habit_repository.dart';
 import 'package:make_habits/assets/headings.dart';
 import 'package:make_habits/bloc/adding_screen_bloc/adding_screen_bloc.dart';
-import 'package:make_habits/services/habit_service.dart';
 
 final days = List<String>.generate(31, (i) => (i + 1).toString());
 final months = List<String>.generate(12, (i) => (i + 1).toString());
@@ -39,15 +39,14 @@ class AddingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: const Text(addingScreenAppTitle)),
-        body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: BlocProvider<AddingScreenBloc>(
-                create: (context) => AddingScreenBloc(
-                    RepositoryProvider.of<HabitService>(context))
-                  ..add(AddingScreenInitialEvent()),
-                child: const AddForm())));
+    return BlocProvider<AddingScreenBloc>(
+        create: (context) =>
+            AddingScreenBloc(RepositoryProvider.of<HabitRepository>(context))
+              ..add(AddingScreenInitialEvent()),
+        child: Scaffold(
+            appBar: AppBar(title: const Text(addingScreenAppTitle)),
+            body:
+                const Padding(padding: EdgeInsets.all(8.0), child: AddForm())));
   }
 }
 
@@ -67,6 +66,7 @@ class AddForm extends StatelessWidget {
           }
           ScaffoldMessenger.of(context).showSnackBar(createSnackBar(
               text: state.printError(state.status), color: color));
+          context.read<AddingScreenBloc>().add(AddingScreenErrorEvent());
         }
       },
       child: Padding(
@@ -302,7 +302,6 @@ class _SaveButton extends StatelessWidget {
       builder: (context, state) {
         return ElevatedButton(
             onPressed: () {
-              context.read<AddingScreenBloc>().add(AddingScreenLoadedEvent());
               context.read<AddingScreenBloc>().add(AddingScreenSaveEvent(
                   nameController.text,
                   selectedFirstDay,

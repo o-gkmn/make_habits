@@ -1,58 +1,50 @@
 import 'dart:async';
+import 'package:habit_repository/habit_repository.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:make_habits/assets/headings.dart';
-import 'package:make_habits/modals/habits_model.dart';
-import 'package:make_habits/services/services.dart';
 
 part 'adding_screen_event.dart';
 part 'adding_screen_state.dart';
 
 class AddingScreenBloc extends Bloc<AddingScreenEvent, AddingScreenState> {
-  Services habitServices;
+  HabitRepository services;
 
-  AddingScreenBloc(this.habitServices) : super(AddingScreenInitialState()) {
+  AddingScreenBloc(this.services) : super(AddingScreenInitialState()) {
     on<AddingScreenInitialEvent>(_onInitialEvent);
-    on<AddingScreenLoadingEvent>(_onLoadingEvent);
-    on<AddingScreenLoadedEvent>(_onLoadedEvent);
     on<AddingScreenErrorEvent>(_onErrorEvent);
     on<AddingScreenSaveEvent>(_onSaveEvent);
   }
 
   FutureOr<void> _onInitialEvent(
-      AddingScreenInitialEvent event, Emitter<AddingScreenState> emit) {
-    emit(AddingScreenLoadingState());
+      AddingScreenInitialEvent event, Emitter<AddingScreenState> emit) async {
+    final habits = services.getHabits();
     try {
-      emit(AddingScreenLoadedState());
+      await emit.forEach<List<Habit>>(habits,
+          onData: (habits) => AddingScreenLoadedState(habits));
     } catch (e) {
       emit(const AddingScreenErrorState(Status.unexpectedError));
     }
   }
 
-  FutureOr<void> _onLoadingEvent(
-      AddingScreenLoadingEvent event, Emitter<AddingScreenState> emit) {}
-
-  FutureOr<void> _onLoadedEvent(
-      AddingScreenLoadedEvent event, Emitter<AddingScreenState> emit) {
-    emit(AddingScreenLoadedState());
-  }
-
   FutureOr<void> _onErrorEvent(
-      AddingScreenErrorEvent event, Emitter<AddingScreenState> emit) {}
+      AddingScreenErrorEvent event, Emitter<AddingScreenState> emit) {
+    return emit.forEach<List<Habit>>(services.getHabits(),
+        onData: (data) => AddingScreenLoadedState(data));
+  }
 
   FutureOr<void> _onSaveEvent(
       AddingScreenSaveEvent event, Emitter<AddingScreenState> emit) async {
-    String firstDate =
+    final String firstDate =
         "${event.firstDay}.${event.firstMonth}.${event.firstYear}";
-    String lastDate = "${event.lastDay}.${event.lastMonth}.${event.lastYear}";
 
-    late DateTime formatFirstDate;
-    late DateTime formatLastDate;
+    final String lastDate =
+        "${event.lastDay}.${event.lastMonth}.${event.lastYear}";
 
-    formatFirstDate = DateFormat("dd.MM.yyyy").parse(firstDate);
-    formatLastDate = DateFormat("dd.MM.yyyy").parse(lastDate);
+    DateTime formatFirstDate = DateFormat("dd.MM.yyyy").parse(firstDate);
+    DateTime formatLastDate = DateFormat("dd.MM.yyyy").parse(lastDate);
 
     int dayCount = formatLastDate.difference(formatFirstDate).inDays;
 
@@ -68,27 +60,24 @@ class AddingScreenBloc extends Bloc<AddingScreenEvent, AddingScreenState> {
       emit(const AddingScreenErrorState(Status.dayError));
       throw Exception();
     }
-    emit(AddingScreenLoadedState());
 
-    int lastId;
     Map<String, bool> days = {};
 
     for (int i = 0; i <= dayCount; ++i) {
-      String date = DateFormat('dd.MM.yyyy')
+      String date = DateFormat("dd.MM.yyyy")
           .format(formatFirstDate.add(Duration(days: i)));
       days[date] = false;
     }
-    List<HabitsModel> habits =
-        await habitServices.getData() as List<HabitsModel>;
 
-    if (habits.isEmpty) {
-      lastId = -1;
-    } else {
-      lastId = habits.last.id;
-    }
-    HabitsModel newData = HabitsModel(
-        lastId + 1, dayCount, event.name, false, firstDate, lastDate, days);
-    habitServices.addData(newData);
+    Habit habit = Habit(
+        id: services.lastId() + 1,
+        name: event.name,
+        startDay: firstDate,
+        endDay: lastDate,
+        didUserSucced: false,
+        daysCount: dayCount,
+        days: days);
+    await services.saveHabits(habit);
     emit(const AddingScreenErrorState(Status.succes));
   }
 }

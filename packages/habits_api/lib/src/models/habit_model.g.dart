@@ -1,23 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'habits_model.dart';
+part of 'habit_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-HabitsModel _$HabitsModelFromJson(Map<String, dynamic> json) => HabitsModel(
-      json['id'] as int,
-      json['daysCount'] as int,
-      json['name'] as String,
-      json['didUserSucced'] as bool,
-      json['startDay'] as String,
-      json['endDay'] as String,
-      Map<String, bool>.from(json['days'] as Map),
+Habit _$HabitFromJson(Map<String, dynamic> json) => Habit(
+      id: json['id'] as int,
+      daysCount: json['daysCount'] as int,
+      name: json['name'] as String,
+      didUserSucced: json['didUserSucced'] as bool,
+      startDay: json['startDay'] as String,
+      endDay: json['endDay'] as String,
+      days: Map<String, bool>.from(json['days'] as Map),
     );
 
-Map<String, dynamic> _$HabitsModelToJson(HabitsModel instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$HabitToJson(Habit instance) => <String, dynamic>{
       'id': instance.id,
       'daysCount': instance.daysCount,
       'name': instance.name,

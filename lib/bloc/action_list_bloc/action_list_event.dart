@@ -9,22 +9,13 @@ abstract class ActionListEvent extends Equatable {
 
 class ActionListLoadEvent extends ActionListEvent {}
 
-class ActionListLoadingEvent extends ActionListEvent {}
+class ActionListDeleteEvent extends ActionListEvent {
+  final int id;
 
-class ActionListLoadedEvent extends ActionListEvent {
-  final List<HabitsModel> habits;
-
-  const ActionListLoadedEvent(this.habits);
+  const ActionListDeleteEvent(this.id);
 
   @override
-  List<Object> get props => [habits];
+  List<Object> get props => [id];
 }
 
-class ActionListErrorEvent extends ActionListEvent {
-  final String errorMsg;
-
-  const ActionListErrorEvent(this.errorMsg);
-
-  @override
-  List<Object> get props => [errorMsg];
-}
+class ActionListClearAllEvent extends ActionListEvent {}

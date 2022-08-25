@@ -11,22 +11,31 @@ enum Status {
 }
 
 abstract class AddingScreenState extends Equatable {
-  const AddingScreenState();
+  const AddingScreenState({this.habits = const []});
+
+  final List<Habit> habits;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [habits];
 }
 
 class AddingScreenInitialState extends AddingScreenState {}
 
 class AddingScreenLoadingState extends AddingScreenState {}
 
-class AddingScreenLoadedState extends AddingScreenState {}
+class AddingScreenLoadedState extends AddingScreenState {
+  final List<Habit> habitsList;
+
+  const AddingScreenLoadedState(this.habitsList) : super(habits: habitsList);
+
+  @override
+  List<Object> get props => [habitsList];
+}
 
 class AddingScreenErrorState extends AddingScreenState {
   final Status status;
 
-  const AddingScreenErrorState(this.status);
+  const AddingScreenErrorState(this.status) : super();
 
   String printError(Status status) {
     switch (status) {

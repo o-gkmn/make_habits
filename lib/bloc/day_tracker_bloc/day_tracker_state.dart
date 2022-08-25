@@ -1,7 +1,9 @@
 part of 'day_tracker_bloc.dart';
 
 abstract class DayTrackerState extends Equatable {
-  const DayTrackerState();
+  final Habit habit;
+
+  const DayTrackerState({this.habit = const Habit.empty()});
 
   @override
   List<Object> get props => [];
@@ -12,12 +14,12 @@ class DayTrackerInitialState extends DayTrackerState {}
 class DayTrackerLoadingState extends DayTrackerState {}
 
 class DayTrackerLoadedState extends DayTrackerState {
-  final HabitsModel habit;
+  final Habit _habit;
 
-  const DayTrackerLoadedState(this.habit);
+  const DayTrackerLoadedState(this._habit) : super(habit: _habit);
 
   @override
-  List<Object> get props => [habit];
+  List<Object> get props => [_habit];
 }
 
 class DayTrackerErrorState extends DayTrackerState {

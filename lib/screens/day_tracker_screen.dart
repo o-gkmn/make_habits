@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:habit_repository/habit_repository.dart';
 import 'package:make_habits/bloc/day_tracker_bloc/day_tracker_bloc.dart';
 import 'package:make_habits/screens/action_list_screen.dart';
-import 'package:make_habits/services/habit_service.dart';
 
 bool isChecked = false;
 
@@ -13,7 +13,8 @@ class DayTrackerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => DayTrackerBloc(
-          RepositoryProvider.of<HabitService>(context), ActionListScreen.index)
+          RepositoryProvider.of<HabitRepository>(context),
+          ActionListScreen.onTapIndex)
         ..add(DayTrackerInitialEvent()),
       child: BlocBuilder<DayTrackerBloc, DayTrackerState>(
         builder: (context, state) {
@@ -58,27 +59,23 @@ class DayTrackerBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DayTrackerBloc, DayTrackerState>(
-      builder: (context, state) {
-        if (state is DayTrackerLoadedState) {
-          return Container(
-            color: Theme.of(context).primaryColor,
-            child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 10, 2, 2),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(50.0))),
-                child: ListView.builder(
-                    itemCount: state.habit.days.length,
-                    itemBuilder: (BuildContext context, index) {
-                      dayIndex = index;
-                      return _ListAppearance();
-                    })),
-          );
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+        builder: (context, state) {
+      return Container(
+        color: Theme.of(context).primaryColor,
+        child: Container(
+            padding: const EdgeInsets.fromLTRB(20, 10, 2, 2),
+            decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius:
+                    const BorderRadius.only(topLeft: Radius.circular(50.0))),
+            child: ListView.builder(
+                itemCount: state.habit.days.length,
+                itemBuilder: (BuildContext context, index) {
+                  dayIndex = index;
+                  return _ListAppearance();
+                })),
+      );
+    });
   }
 }
 
@@ -112,43 +109,36 @@ class _ListItemState extends State {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DayTrackerBloc, DayTrackerState>(
-      builder: (context, state) {
-        if (state is DayTrackerLoadedState) {
-          return Row(
-            children: [
-              Container(
-                  alignment: Alignment.center,
-                  height: 70,
-                  width: 70,
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25),
-                          bottomLeft: Radius.circular(25)),
-                      color: Colors.amber),
-                  child: Text("${DayTrackerBody.dayIndex + 1}",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline4)),
-              const SizedBox(width: 10),
-              Text(
-                state.habit.days.keys.elementAt(DayTrackerBody.dayIndex),
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(width: 100),
-              Checkbox(
-                  activeColor: Colors.green,
-                  value: state.habit.days.values
-                      .elementAt(DayTrackerBody.dayIndex),
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isChecked = value!;
-                    });
-                  })
-            ],
-          );
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
+        builder: (context, state) {
+      return Row(children: [
+        Container(
+            alignment: Alignment.center,
+            height: 70,
+            width: 70,
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    bottomLeft: Radius.circular(25)),
+                color: Colors.amber),
+            child: Text("${DayTrackerBody.dayIndex + 1}",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline4)),
+        const SizedBox(width: 10),
+        Text(
+          state.habit.days.keys.elementAt(DayTrackerBody.dayIndex),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(width: 100),
+        Checkbox(
+            activeColor: Colors.green,
+            value: state.habit.days.values.elementAt(DayTrackerBody.dayIndex),
+            onChanged: (bool? value) {
+              setState(() {
+                isChecked = value!;
+              });
+            })
+      ]);
+    });
   }
 }
 

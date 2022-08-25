@@ -1,10 +1,12 @@
 part of 'action_list_bloc.dart';
 
 abstract class ActionListState extends Equatable {
-  const ActionListState();
+  const ActionListState({this.habits = const []});
+
+  final List<Habit> habits;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [habits];
 }
 
 class ActionListLoadState extends ActionListState {}
@@ -12,12 +14,12 @@ class ActionListLoadState extends ActionListState {}
 class ActionListLoadingState extends ActionListState {}
 
 class ActionListLoadedState extends ActionListState {
-  final List<HabitsModel> habits;
+  final List<Habit> habitsList;
 
-  const ActionListLoadedState(this.habits);
+  const ActionListLoadedState(this.habitsList) : super(habits: habitsList);
 
   @override
-  List<Object> get props => [habits];
+  List<Object> get props => [habitsList];
 }
 
 class ActionListErrorState extends ActionListState {
