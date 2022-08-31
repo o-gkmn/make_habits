@@ -28,5 +28,24 @@ class DayTrackerBloc extends Bloc<DayTrackerEvent, DayTrackerState> {
   }
 
   FutureOr<void> _onChange(
-      DayTrackerChangeEvent event, Emitter<DayTrackerState> emit) {}
+      DayTrackerChangeEvent event, Emitter<DayTrackerState> emit) async {
+    if (event.habit.days.containsKey(event.dayString)) {
+      int trueValues = 0;
+      for (int i = 0; i < event.habit.days.values.length; ++i) {
+        if (event.habit.days.values.elementAt(i) == true) {
+          trueValues += 1;
+        }
+      }
+
+      Habit habit;
+      double percent = trueValues * 100 / event.habit.days.values.length;
+      if (percent == 100.0) {
+        habit = event.habit.copyWith(
+            percent: percent, days: event.habit.days, didUserSucced: true);
+      } else {
+        habit = event.habit.copyWith(percent: percent, days: event.habit.days);
+      }
+      await service.saveHabits(habit);
+    }
+  }
 }

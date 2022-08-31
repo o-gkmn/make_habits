@@ -16,6 +16,8 @@ abstract class HabitsApi {
   Future<void> setId();
 
   int lastId();
+
+  Future<void> clearAllDeactive();
 }
 
 class HabitNotFoundExceptions implements Exception {}

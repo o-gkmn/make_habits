@@ -9,4 +9,12 @@ abstract class DayTrackerEvent extends Equatable {
 
 class DayTrackerInitialEvent extends DayTrackerEvent {}
 
-class DayTrackerChangeEvent extends DayTrackerEvent {}
+class DayTrackerChangeEvent extends DayTrackerEvent {
+  final Habit habit;
+  final String dayString;
+
+  const DayTrackerChangeEvent(this.habit, this.dayString);
+
+  @override
+  List<Object> get props => [habit, dayString];
+}

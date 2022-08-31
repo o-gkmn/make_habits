@@ -2,12 +2,12 @@ const String appName = "Alışkanlık Edin";
 
 //Main Screen
 const String mainScreenButton1 = "Alışkanlık Ekle";
-const String mainScreenButton2 = "Alışkanlık Listesi";
-const String mainScreenButton3 = "Kaç gün geçti?";
-const String mainScreenButton4 = "?????";
+const String mainScreenButton2 = "Aktif Alışkanlıklar";
+const String mainScreenButton3 = "Gün Takip";
+const String mainScreenButton4 = "Biten Alışkanlıklar";
 
 //List Screnn
-const String actionListScreenAppTitle = "Liste";
+const String actionListScreenAppTitle = "Aktif Liste";
 
 //Adding Screen
 const String addingScreenAppTitle = "Ekle";
@@ -23,3 +23,6 @@ const String succesText = "Başarıyla Eklendi";
 
 //Day Tracker
 const String dayTrackerAppTitle = "Gün Takip";
+
+//Deactive Action List
+const String deactiveActionListAppTitle = "Bitmiş Liste";

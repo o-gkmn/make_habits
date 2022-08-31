@@ -10,8 +10,6 @@ import 'package:make_habits/screens/day_tracker_screen.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:make_habits/assets/headings.dart';
 
-void change(bool? boolean) {}
-
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
 
@@ -44,6 +42,7 @@ class MainScreenForm extends StatelessWidget {
           }
         },
         child: Column(children: [
+          const Spacer(flex: 1),
           _PercentIndicator(),
           const Spacer(flex: 1),
           const Divider(),
@@ -52,25 +51,29 @@ class MainScreenForm extends StatelessWidget {
             Text(context.watch<MainScreenBloc>().yesterdayString),
             _YesterdayCheckBox(),
             const Spacer(flex: 1),
-            Text(context.read<MainScreenBloc>().todayString),
+            Text(context.watch<MainScreenBloc>().todayString),
             _TodayCheckBox(),
             const Spacer(flex: 1),
-            Text(context.read<MainScreenBloc>().tommorowString),
+            Text(context.watch<MainScreenBloc>().tommorowString),
             _TommorowCheckBox()
           ]),
           const Spacer(flex: 1),
           const Divider(),
           const Spacer(flex: 1),
           Row(children: [
+            const Spacer(flex: 1),
             _AddingScreenButton(),
             const Spacer(flex: 1),
             _ActionListButton(),
+            const Spacer(flex: 1),
           ]),
           const SizedBox(height: 15.0),
           Row(children: [
+            const Spacer(flex: 1),
             _DaysTrackerButton(),
             const Spacer(flex: 1),
-            _Button4(),
+            _DeactiveActionListButton(),
+            const Spacer(flex: 1),
           ]),
           const Spacer(flex: 1)
         ]));
@@ -91,9 +94,9 @@ class _PercentIndicatorState extends State {
               animationDuration: 2000,
               radius: MediaQuery.of(context).size.width / 4,
               lineWidth: MediaQuery.of(context).size.width / 16,
-              percent: context.read<MainScreenBloc>().percent / 100,
+              percent: state.habit.percent / 100,
               center: Text(
-                "%${context.read<MainScreenBloc>().percent.toStringAsFixed(1)}",
+                "%${state.habit.percent.toStringAsFixed(1)}",
                 style: Theme.of(context).textTheme.headline4,
               )));
     });
@@ -107,7 +110,9 @@ class _YesterdayCheckBoxState extends State {
         builder: (context, state) {
       return Checkbox(
           value: context.read<MainScreenBloc>().yesterdayBool,
-          onChanged: change,
+          onChanged: (value) => context.read<MainScreenBloc>().add(
+              MainScreenCheckEvent(value!, state.habit,
+                  context.read<MainScreenBloc>().yesterdayString)),
           activeColor: Colors.green);
     });
   }
@@ -120,7 +125,9 @@ class _TodayCheckBoxState extends State {
         builder: ((context, state) {
       return Checkbox(
         value: context.read<MainScreenBloc>().todayBool,
-        onChanged: change,
+        onChanged: (value) => context.read<MainScreenBloc>().add(
+            MainScreenCheckEvent(value!, state.habit,
+                context.read<MainScreenBloc>().todayString)),
         activeColor: Colors.green,
       );
     }));
@@ -134,7 +141,9 @@ class _TommorowCheckBoxState extends State {
         builder: ((context, state) {
       return Checkbox(
         value: context.read<MainScreenBloc>().tommorowBool,
-        onChanged: change,
+        onChanged: (value) => context.read<MainScreenBloc>().add(
+            MainScreenCheckEvent(value!, state.habit,
+                context.read<MainScreenBloc>().tommorowString)),
         activeColor: Colors.green,
       );
     }));
@@ -201,17 +210,21 @@ class _DaysTrackerButton extends StatelessWidget {
   }
 }
 
-class _Button4 extends StatelessWidget {
+class _DeactiveActionListButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainScreenBloc, MainScreenState>(
       builder: (context, state) {
         return ElevatedButton(
             style: ElevatedButton.styleFrom(minimumSize: const Size(155, 50)),
-            onPressed: () {},
-            child: const Text(mainScreenButton3));
+            onPressed: () => pushDeactiveActionListScreen(context),
+            child: const Text(mainScreenButton4));
       },
     );
+  }
+
+  void pushDeactiveActionListScreen(BuildContext context) {
+    Navigator.of(context).popAndPushNamed("/DeactiveList");
   }
 }
 

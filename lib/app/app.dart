@@ -4,6 +4,7 @@ import 'package:habit_repository/habit_repository.dart';
 import 'package:make_habits/screens/action_list_screen.dart';
 import 'package:make_habits/screens/adding_screen.dart';
 import 'package:make_habits/screens/day_tracker_screen.dart';
+import 'package:make_habits/screens/deactive_action_list.dart';
 import 'package:make_habits/screens/main_screen.dart';
 
 class App extends StatelessWidget {
@@ -33,6 +34,7 @@ class AppView extends StatelessWidget {
         "/List": (context) => const ActionListScreen(),
         "/Adding": (context) => const AddingScreen(),
         "/DayTracker": (context) => const DayTrackerScreen(),
+        "/DeactiveList": (context) => const DeactiveActionListScreen()
       },
       initialRoute: "/",
     );

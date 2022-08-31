@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:equatable/equatable.dart';
 import 'package:habit_repository/habit_repository.dart';
 import 'package:intl/intl.dart';
@@ -9,9 +11,9 @@ part 'main_screen_state.dart';
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   HabitRepository service;
 
-  String todayString = "";
-  String tommorowString = "";
-  String yesterdayString = "";
+  String todayString = "NaN";
+  String tommorowString = "NaN";
+  String yesterdayString = "NaN";
 
   bool todayBool = false;
   bool tommorowBool = false;
@@ -22,6 +24,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   MainScreenBloc(this.service) : super(MainScreenInitialState()) {
     on<MainScreenInitialEvent>(_onMainScreenInitialEvent);
     on<MainScreenLoadingEvent>(_onMainScreenLoadingEvent);
+    on<MainScreenCheckEvent>(_onMainScreenCheckEvent);
   }
 
   void _onMainScreenInitialEvent(
@@ -30,8 +33,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     await habitList.forEach((element) {
       try {
         if (element.isEmpty) {
-          emit(const MainScreenCheckBoxState(
-              "NaN", "NaN", "NaN", false, false, false, 0));
+          emit(MainScreenCheckBoxState(element.elementAt(event.index), "NaN",
+              "NaN", "NaN", false, false, false, 0));
         } else {
           add(MainScreenLoadingEvent(element, index: event.index));
         }
@@ -80,7 +83,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         tommorowBool = values.elementAt(2);
       }
     }
-
     for (int i = 0; i < values.length; ++i) {
       if (values.elementAt(i) == true) {
         trueValues += 1;
@@ -88,7 +90,40 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     }
 
     double percent = trueValues * 100 / values.length;
-    emit(MainScreenCheckBoxState(todayString, tommorowString, yesterdayString,
-        todayBool, tommorowBool, yesterdayBool, percent));
+    emit(MainScreenCheckBoxState(
+        event.habits[event.index],
+        todayString,
+        tommorowString,
+        yesterdayString,
+        todayBool,
+        tommorowBool,
+        yesterdayBool,
+        percent));
+  }
+
+  FutureOr<void> _onMainScreenCheckEvent(
+      MainScreenCheckEvent event, Emitter<MainScreenState> emit) async {
+    for (String day in event.habit.days.keys) {
+      if (day == event.dayString) {
+        event.habit.days[event.dayString] = event.checkBoxStatus;
+      }
+    }
+
+    int trueValues = 0;
+    for (int i = 0; i < event.habit.days.values.length; ++i) {
+      if (event.habit.days.values.elementAt(i) == true) {
+        trueValues += 1;
+      }
+    }
+
+    Habit habit;
+    double percent = trueValues * 100 / event.habit.days.values.length;
+    if (percent == 100.0) {
+      habit = event.habit.copyWith(
+          percent: percent, days: event.habit.days, didUserSucced: true);
+    } else {
+      habit = event.habit.copyWith(percent: percent, days: event.habit.days);
+    }
+    await service.saveHabits(habit);
   }
 }

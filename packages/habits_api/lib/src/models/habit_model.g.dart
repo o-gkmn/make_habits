@@ -9,6 +9,7 @@ part of 'habit_model.dart';
 Habit _$HabitFromJson(Map<String, dynamic> json) => Habit(
       id: json['id'] as int,
       daysCount: json['daysCount'] as int,
+      percent: (json['percent'] as num).toDouble(),
       name: json['name'] as String,
       didUserSucced: json['didUserSucced'] as bool,
       startDay: json['startDay'] as String,
@@ -19,6 +20,7 @@ Habit _$HabitFromJson(Map<String, dynamic> json) => Habit(
 Map<String, dynamic> _$HabitToJson(Habit instance) => <String, dynamic>{
       'id': instance.id,
       'daysCount': instance.daysCount,
+      'percent': instance.percent,
       'name': instance.name,
       'startDay': instance.startDay,
       'endDay': instance.endDay,

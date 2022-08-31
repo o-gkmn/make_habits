@@ -76,6 +76,7 @@ class AddingScreenBloc extends Bloc<AddingScreenEvent, AddingScreenState> {
         endDay: lastDate,
         didUserSucced: false,
         daysCount: dayCount,
+        percent: 0.0,
         days: days);
     await services.saveHabits(habit);
     emit(const AddingScreenErrorState(Status.succes));

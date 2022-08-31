@@ -17,4 +17,6 @@ class HabitRepository {
   Future<void> setId() => _habitsApi.setId();
 
   int lastId() => _habitsApi.lastId();
+
+  Future<void> clearAllDeactive() => _habitsApi.clearAllDeactive();
 }

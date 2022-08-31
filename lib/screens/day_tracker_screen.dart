@@ -72,40 +72,49 @@ class DayTrackerBody extends StatelessWidget {
                 itemCount: state.habit.days.length,
                 itemBuilder: (BuildContext context, index) {
                   dayIndex = index;
-                  return _ListAppearance();
+                  return ListAppearance(index: index);
                 })),
       );
     });
   }
 }
 
-class _ListAppearanceState extends State {
+class ListAppearanceState extends State<ListAppearance> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.all(0),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25))),
-          onPressed: () {
-            setState(() {
-              isChecked = !isChecked;
-            });
-          },
-          child: Container(
-              padding: const EdgeInsets.only(left: 0.0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25.0),
-                  color: const Color(0xfff5f6fa)),
-              height: 70,
-              child: _ListItem()),
-        ));
+    return BlocBuilder<DayTrackerBloc, DayTrackerState>(
+      builder: (context, state) {
+        return Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(0),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25))),
+              onPressed: () {
+                setState(() {
+                  state.habit
+                          .days[state.habit.days.keys.elementAt(widget.index)] =
+                      !state.habit.days.values.elementAt(widget.index);
+                });
+                context.read<DayTrackerBloc>().add(DayTrackerChangeEvent(
+                    state.habit,
+                    state.habit.days.keys.elementAt(widget.index)));
+              },
+              child: Container(
+                  padding: const EdgeInsets.only(left: 0.0),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                      color: const Color(0xfff5f6fa)),
+                  height: 70,
+                  child: ListItem(indeX: widget.index)),
+            ));
+      },
+    );
   }
 }
 
-class _ListItemState extends State {
+class ListItemState extends State<ListItem> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DayTrackerBloc, DayTrackerState>(
@@ -120,38 +129,50 @@ class _ListItemState extends State {
                     topLeft: Radius.circular(25),
                     bottomLeft: Radius.circular(25)),
                 color: Colors.amber),
-            child: Text("${DayTrackerBody.dayIndex + 1}",
+            child: Text("${widget.indeX + 1}",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline4)),
         const SizedBox(width: 10),
         Text(
-          state.habit.days.keys.elementAt(DayTrackerBody.dayIndex),
+          state.habit.days.keys.elementAt(widget.indeX),
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        const SizedBox(width: 100),
+        const Spacer(flex: 10),
         Checkbox(
-            activeColor: Colors.green,
-            value: state.habit.days.values.elementAt(DayTrackerBody.dayIndex),
-            onChanged: (bool? value) {
-              setState(() {
-                isChecked = value!;
-              });
-            })
+          activeColor: Colors.green,
+          value:
+              state.habit.days[state.habit.days.keys.elementAt(widget.indeX)],
+          onChanged: (value) {
+            setState(() {
+              state.habit.days[state.habit.days.keys.elementAt(widget.indeX)] =
+                  value!;
+            });
+            context.read<DayTrackerBloc>().add(DayTrackerChangeEvent(
+                state.habit, state.habit.days.keys.elementAt(widget.indeX)));
+          },
+        ),
+        const Spacer(flex: 1),
       ]);
     });
   }
 }
 
-class _ListItem extends StatefulWidget {
+class ListItem extends StatefulWidget {
+  final int indeX;
+  const ListItem({Key? key, required this.indeX}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
-    return _ListItemState();
+    return ListItemState();
   }
 }
 
-class _ListAppearance extends StatefulWidget {
+class ListAppearance extends StatefulWidget {
+  final int index;
+
+  const ListAppearance({Key? key, required this.index}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
-    return _ListAppearanceState();
+    return ListAppearanceState();
   }
 }

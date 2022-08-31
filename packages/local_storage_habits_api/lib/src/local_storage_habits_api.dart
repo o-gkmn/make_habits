@@ -83,7 +83,15 @@ class LocalStorageHabitsApi extends HabitsApi {
   @override
   Future<void> clearAll() {
     final habits = [..._habitStreamController.value];
-    habits.clear();
+    habits.removeWhere((element) => !element.didUserSucced);
+    _habitStreamController.add(habits);
+    return _setValue(kHabitsCollectionKey, json.encode(habits));
+  }
+
+  @override
+  Future<void> clearAllDeactive() {
+    final habits = [..._habitStreamController.value];
+    habits.removeWhere((element) => element.didUserSucced);
     _habitStreamController.add(habits);
     return _setValue(kHabitsCollectionKey, json.encode(habits));
   }

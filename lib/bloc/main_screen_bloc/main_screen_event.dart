@@ -25,3 +25,14 @@ class MainScreenLoadingEvent extends MainScreenEvent {
   @override
   List<Object> get props => [habits, index];
 }
+
+class MainScreenCheckEvent extends MainScreenEvent {
+  final bool checkBoxStatus;
+  final String dayString;
+  final Habit habit;
+
+  const MainScreenCheckEvent(this.checkBoxStatus, this.habit, this.dayString);
+
+  @override
+  List<Object> get props => [checkBoxStatus, habit, dayString];
+}

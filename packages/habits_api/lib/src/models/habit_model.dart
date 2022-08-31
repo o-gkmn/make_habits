@@ -10,6 +10,7 @@ Bloc implementasyonunda model sınıfını equatable sınıfından extends edili
 class Habit extends Equatable {
   final int id;
   final int daysCount;
+  final double percent;
   final String name;
   final String startDay;
   final String endDay;
@@ -19,6 +20,7 @@ class Habit extends Equatable {
   const Habit(
       {required this.id,
       required this.daysCount,
+      required this.percent,
       required this.name,
       required this.didUserSucced,
       required this.startDay,
@@ -28,6 +30,7 @@ class Habit extends Equatable {
   const Habit.empty(
       {this.id = -1,
       this.daysCount = 0,
+      this.percent = 0,
       this.name = "",
       this.didUserSucced = false,
       this.startDay = "",
@@ -37,6 +40,7 @@ class Habit extends Equatable {
   Habit copyWith(
       {int? id,
       int? daysCount,
+      double? percent,
       String? name,
       String? startDay,
       String? endDay,
@@ -45,6 +49,7 @@ class Habit extends Equatable {
     return Habit(
         id: id ?? this.id,
         daysCount: daysCount ?? this.daysCount,
+        percent: percent ?? this.percent,
         name: name ?? this.name,
         didUserSucced: didUserSucced ?? this.didUserSucced,
         startDay: startDay ?? this.startDay,

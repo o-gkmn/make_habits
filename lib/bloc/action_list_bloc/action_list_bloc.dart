@@ -21,8 +21,15 @@ class ActionListBloc extends Bloc<ActionListEvent, ActionListState> {
     emit(ActionListLoadingState());
     try {
       final habitsList = services.getHabits();
-      await emit.forEach<List<Habit>>(habitsList,
-          onData: (habits) => ActionListLoadedState(habits));
+      List<Habit> unSuccededHabitList = [];
+      await emit.forEach<List<Habit>>(habitsList, onData: (habits) {
+        for (var element in habits) {
+          if (!element.didUserSucced) {
+            unSuccededHabitList.add(element);
+          }
+        }
+        return ActionListLoadedState(unSuccededHabitList);
+      });
     } catch (e) {
       emit(ActionListErrorState(e.toString()));
     }
@@ -30,8 +37,9 @@ class ActionListBloc extends Bloc<ActionListEvent, ActionListState> {
 
   void _onDeleteEvent(
       ActionListDeleteEvent event, Emitter<ActionListState> emit) async {
-    await services.deleteHabits(event.id);
+    await services.deleteHabits(event.habit.id);
     await services.setId();
+    add(ActionListLoadEvent());
   }
 
   FutureOr<void> _onClearAll(
