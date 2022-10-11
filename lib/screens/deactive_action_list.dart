@@ -4,6 +4,18 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:habit_repository/habit_repository.dart';
 import 'package:make_habits/assets/headings.dart';
 import 'package:make_habits/bloc/deactive_action_list_bloc/deactive_action_list_bloc.dart';
+import 'package:make_habits/bloc/main_screen_bloc/main_screen_bloc.dart';
+import 'package:make_habits/screens/main_screen.dart';
+
+void pushMainScreen(BuildContext context, int index) {
+  DeactiveActionListScreen.onTapIndex = index;
+  Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: ((context) => BlocProvider(
+          create: (context) =>
+              MainScreenBloc(RepositoryProvider.of<HabitRepository>(context))
+                ..add(MainScreenInitialEvent(index: index)),
+          child: const MainScreen()))));
+}
 
 class _DeactiveActionListState extends State {
   @override
@@ -33,7 +45,10 @@ class _DeactiveActionListState extends State {
                         itemCount: state.habits.length,
                         itemBuilder: (BuildContext context, index) {
                           DeactiveActionListScreen.index = index;
-                          return RowDesign(index: index);
+                          return GestureDetector(
+                              onTap: () => pushMainScreen(
+                                  context, state.habits[index].id),
+                              child: RowDesign(index: index));
                         }));
               }
               return const ScreenView(

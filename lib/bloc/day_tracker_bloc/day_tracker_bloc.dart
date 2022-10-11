@@ -43,7 +43,8 @@ class DayTrackerBloc extends Bloc<DayTrackerEvent, DayTrackerState> {
         habit = event.habit.copyWith(
             percent: percent, days: event.habit.days, didUserSucced: true);
       } else {
-        habit = event.habit.copyWith(percent: percent, days: event.habit.days);
+        habit = event.habit.copyWith(
+            percent: percent, days: event.habit.days, didUserSucced: false);
       }
       await service.saveHabits(habit);
     }

@@ -21,10 +21,18 @@ class MainScreen extends StatelessWidget {
               ..add(MainScreenInitialEvent(index: ActionListScreen.onTapIndex)),
         child: Scaffold(
             appBar: AppBar(title: const Text(appName)),
-            body: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: MainScreenForm(),
-            )));
+            body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: BlocListener<MainScreenBloc, MainScreenState>(
+                  listener: (context, state) {
+                    if (state is MainScreenErrorState) {
+                      ScaffoldMessenger.of(context).showSnackBar(createSnackBar(
+                          text: state.e.toString(),
+                          color: const Color(0xffff3838)));
+                    }
+                  },
+                  child: const MainScreenForm(),
+                ))));
   }
 }
 
@@ -33,50 +41,45 @@ class MainScreenForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<MainScreenBloc, MainScreenState>(
-        bloc: BlocProvider.of<MainScreenBloc>(context),
-        listener: (context, state) {
-          if (state is MainScreenErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(createSnackBar(
-                text: state.e.toString(), color: const Color(0xffff3838)));
-          }
-        },
-        child: Column(children: [
+    return BlocBuilder<MainScreenBloc, MainScreenState>(
+        builder: (context, state) {
+      return Column(children: [
+        const Spacer(flex: 1),
+        _PercentIndicator(),
+        const Spacer(flex: 1),
+        const Divider(),
+        const Spacer(flex: 1),
+        Row(children: [
+          Text(state.widgetValues.yesterday),
+          _YesterdayCheckBox(),
           const Spacer(flex: 1),
-          _PercentIndicator(),
+          Text(state.widgetValues.today),
+          _TodayCheckBox(),
           const Spacer(flex: 1),
-          const Divider(),
+          Text(state.widgetValues.tommorow),
+          _TommorowCheckBox()
+        ]),
+        const Spacer(flex: 1),
+        const Divider(),
+        const Spacer(flex: 1),
+        Row(children: [
           const Spacer(flex: 1),
-          Row(children: [
-            Text(context.watch<MainScreenBloc>().yesterdayString),
-            _YesterdayCheckBox(),
-            const Spacer(flex: 1),
-            Text(context.watch<MainScreenBloc>().todayString),
-            _TodayCheckBox(),
-            const Spacer(flex: 1),
-            Text(context.watch<MainScreenBloc>().tommorowString),
-            _TommorowCheckBox()
-          ]),
+          _AddingScreenButton(),
           const Spacer(flex: 1),
-          const Divider(),
+          _ActionListButton(),
           const Spacer(flex: 1),
-          Row(children: [
-            const Spacer(flex: 1),
-            _AddingScreenButton(),
-            const Spacer(flex: 1),
-            _ActionListButton(),
-            const Spacer(flex: 1),
-          ]),
-          const SizedBox(height: 15.0),
-          Row(children: [
-            const Spacer(flex: 1),
-            _DaysTrackerButton(),
-            const Spacer(flex: 1),
-            _DeactiveActionListButton(),
-            const Spacer(flex: 1),
-          ]),
-          const Spacer(flex: 1)
-        ]));
+        ]),
+        const SizedBox(height: 15.0),
+        Row(children: [
+          const Spacer(flex: 1),
+          _DaysTrackerButton(),
+          const Spacer(flex: 1),
+          _DeactiveActionListButton(),
+          const Spacer(flex: 1),
+        ]),
+        const Spacer(flex: 1)
+      ]);
+    });
   }
 }
 
@@ -111,8 +114,8 @@ class _YesterdayCheckBoxState extends State {
       return Checkbox(
           value: context.read<MainScreenBloc>().yesterdayBool,
           onChanged: (value) => context.read<MainScreenBloc>().add(
-              MainScreenCheckEvent(value!, state.habit,
-                  context.read<MainScreenBloc>().yesterdayString)),
+              MainScreenCheckEvent(
+                  value!, state.habit, state.widgetValues.yesterday)),
           activeColor: Colors.green);
     });
   }
@@ -126,8 +129,8 @@ class _TodayCheckBoxState extends State {
       return Checkbox(
         value: context.read<MainScreenBloc>().todayBool,
         onChanged: (value) => context.read<MainScreenBloc>().add(
-            MainScreenCheckEvent(value!, state.habit,
-                context.read<MainScreenBloc>().todayString)),
+            MainScreenCheckEvent(
+                value!, state.habit, state.widgetValues.today)),
         activeColor: Colors.green,
       );
     }));
@@ -142,8 +145,8 @@ class _TommorowCheckBoxState extends State {
       return Checkbox(
         value: context.read<MainScreenBloc>().tommorowBool,
         onChanged: (value) => context.read<MainScreenBloc>().add(
-            MainScreenCheckEvent(value!, state.habit,
-                context.read<MainScreenBloc>().tommorowString)),
+            MainScreenCheckEvent(
+                value!, state.habit, state.widgetValues.tommorow)),
         activeColor: Colors.green,
       );
     }));

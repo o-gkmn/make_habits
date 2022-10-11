@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:habit_repository/habit_repository.dart';
 import 'package:intl/intl.dart';
 import 'package:bloc/bloc.dart';
+import 'package:make_habits/bloc/main_screen_bloc/models/widgets_values.dart';
 
 part 'main_screen_event.dart';
 part 'main_screen_state.dart';
@@ -33,8 +34,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     await habitList.forEach((element) {
       try {
         if (element.isEmpty) {
-          emit(MainScreenCheckBoxState(element.elementAt(event.index), "NaN",
-              "NaN", "NaN", false, false, false, 0));
+          WidgetValues widgetValues = const WidgetValues.empty();
+          emit(MainScreenCheckBoxState(
+              habit_: const Habit.empty(), widgetValues_: widgetValues));
         } else {
           add(MainScreenLoadingEvent(element, index: event.index));
         }
@@ -46,6 +48,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
 
   void _onMainScreenLoadingEvent(
       MainScreenLoadingEvent event, Emitter<MainScreenState> emit) {
+    WidgetValues widgetValues = const WidgetValues.empty();
     DateTime today = DateTime.now();
     String todayFormat = DateFormat('dd.MM.yyyy').format(today);
 
@@ -62,7 +65,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           yesterdayString = keys.elementAt(i - 1);
           yesterdayBool = values.elementAt(i - 1);
         } else {
-          yesterdayString = "---";
+          yesterdayString = "Gün yok";
           yesterdayBool = false;
         }
 
@@ -70,17 +73,17 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           tommorowString = keys.elementAt(i + 1);
           tommorowBool = values.elementAt(i + 1);
         } else {
-          tommorowString = "---";
+          tommorowString = "Gün yok";
           tommorowBool = false;
         }
         break;
       } else {
-        yesterdayString = keys.elementAt(0);
-        yesterdayBool = values.elementAt(0);
-        todayString = keys.elementAt(1);
-        todayBool = values.elementAt(1);
-        tommorowString = keys.elementAt(2);
-        tommorowBool = values.elementAt(2);
+        yesterdayString = "Gün yok";
+        yesterdayBool = false;
+        todayString = "Gün yok";
+        todayBool = false;
+        tommorowString = "Gün yok";
+        tommorowBool = false;
       }
     }
     for (int i = 0; i < values.length; ++i) {
@@ -90,15 +93,17 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     }
 
     double percent = trueValues * 100 / values.length;
+    widgetValues = widgetValues.copyWith(
+        today: todayString,
+        yesterday: yesterdayString,
+        tommorow: tommorowString,
+        todayBool: todayBool,
+        yesterdayBool: yesterdayBool,
+        tommorowBool: tommorowBool,
+        percent: percent);
+
     emit(MainScreenCheckBoxState(
-        event.habits[event.index],
-        todayString,
-        tommorowString,
-        yesterdayString,
-        todayBool,
-        tommorowBool,
-        yesterdayBool,
-        percent));
+        habit_: event.habits[event.index], widgetValues_: widgetValues));
   }
 
   FutureOr<void> _onMainScreenCheckEvent(
@@ -122,7 +127,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       habit = event.habit.copyWith(
           percent: percent, days: event.habit.days, didUserSucced: true);
     } else {
-      habit = event.habit.copyWith(percent: percent, days: event.habit.days);
+      habit = event.habit.copyWith(
+          percent: percent, days: event.habit.days, didUserSucced: false);
     }
     await service.saveHabits(habit);
   }

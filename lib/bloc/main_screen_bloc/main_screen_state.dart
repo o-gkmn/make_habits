@@ -2,7 +2,11 @@ part of 'main_screen_bloc.dart';
 
 abstract class MainScreenState extends Equatable {
   final Habit habit;
-  const MainScreenState({this.habit = const Habit.empty()});
+  final WidgetValues widgetValues;
+
+  const MainScreenState(
+      {this.habit = const Habit.empty(),
+      this.widgetValues = const WidgetValues.empty()});
 
   @override
   List<Object> get props => [];
@@ -32,37 +36,16 @@ class MainScreenErrorState extends MainScreenState {
 }
 
 class MainScreenCheckBoxState extends MainScreenState {
-  final Habit _habit;
-  final String today;
-  final String yesterday;
-  final String tommorow;
-
-  final bool todayBool;
-  final bool yesterdayBool;
-  final bool tommorowBool;
-
-  final double percent;
+  final Habit habit_;
+  final WidgetValues widgetValues_;
 
   const MainScreenCheckBoxState(
-      this._habit,
-      this.today,
-      this.tommorow,
-      this.yesterday,
-      this.todayBool,
-      this.tommorowBool,
-      this.yesterdayBool,
-      this.percent)
-      : super(habit: _habit);
+      {required this.widgetValues_, required this.habit_})
+      : super(habit: habit_, widgetValues: widgetValues_);
 
   @override
   List<Object> get props => [
-        _habit,
-        today,
-        yesterday,
-        tommorow,
-        todayBool,
-        yesterdayBool,
-        tommorowBool,
-        percent
+        widgetValues_,
+        habit_,
       ];
 }
