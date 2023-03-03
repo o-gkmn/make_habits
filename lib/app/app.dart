@@ -6,29 +6,26 @@ import 'package:make_habits/screens/adding_screen.dart';
 import 'package:make_habits/screens/day_tracker_screen.dart';
 import 'package:make_habits/screens/deactive_action_list.dart';
 import 'package:make_habits/screens/main_screen.dart';
+import 'package:make_habits/theme/app_theme.dart';
 
 class App extends StatelessWidget {
-  final ThemeData theme;
   final HabitRepository habitRepository;
 
-  const App({super.key, required this.theme, required this.habitRepository});
+  const App({super.key, required this.habitRepository});
 
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
-        value: habitRepository, child: AppView(theme: theme));
+        value: habitRepository, child: const AppView());
   }
 }
 
 class AppView extends StatelessWidget {
-  final ThemeData theme;
-
-  const AppView({super.key, required this.theme});
+  const AppView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: theme,
       routes: {
         "/": (context) => const MainScreen(),
         "/List": (context) => const ActionListScreen(),
@@ -36,6 +33,7 @@ class AppView extends StatelessWidget {
         "/DayTracker": (context) => const DayTrackerScreen(),
         "/DeactiveList": (context) => const DeactiveActionListScreen()
       },
+      theme: YellowTheme().lightTheme,
       initialRoute: "/",
     );
   }
