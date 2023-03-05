@@ -34,11 +34,8 @@ dependencies:
   equatable: ^2.0.5
   flutter_bloc: ^8.0.1
   flutter_slidable:
-  iconly: ^1.0.1
   zoom_tap_animation: ^1.1.0
-
-
-
+  fluentui_icons: ^1.0.0
   local_storage_habits_api:
     path: packages/local_storage_habits_api
   habits_api:
