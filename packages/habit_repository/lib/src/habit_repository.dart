@@ -6,17 +6,15 @@ class HabitRepository {
 
   final HabitsApi _habitsApi;
 
-  Stream<List<Habit>> getHabits() => _habitsApi.getHabits();
+  Object getHabits() => _habitsApi.getHabits();
 
-  Future<void> saveHabits(Habit habit) => _habitsApi.saveHabit(habit);
+  Future<void> insertHabit(Habit habit) => _habitsApi.insertHabit(habit);
 
-  Future<void> deleteHabits(int id) => _habitsApi.deleteHabit(id);
+  Future<void> deleteHabit(int id) => _habitsApi.deleteHabit(id);
 
-  Future<void> clearAll() => _habitsApi.clearAll();
+  Future<void> updateHabit(Habit habit) => _habitsApi.updateHabit(habit);
 
-  Future<void> setId() => _habitsApi.setId();
+  Future<void> clearHabits() => _habitsApi.clearHabits();
 
-  int lastId() => _habitsApi.lastId();
-
-  Future<void> clearAllDeactive() => _habitsApi.clearAllDeactive();
+  Future<void> clearDeactiveHabits() => _habitsApi.clearDeactiveHabits();
 }
