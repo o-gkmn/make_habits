@@ -3,58 +3,74 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'habit_model.g.dart';
 
-/*
-Bloc implementasyonunda model sınıfını equatable sınıfından extends edilir
-*/
+enum Frequency {
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  sunday,
+}
+
 @JsonSerializable()
 class Habit extends Equatable {
   final int id;
-  final int daysCount;
-  final double percent;
-  final String name;
-  final String startDay;
-  final String endDay;
-  final bool didUserSucced;
-  final Map<String, bool> days;
+  final String title;
+  final DateTime? startDate;
+  final DateTime? remainder;
+  final int timerInDay;
+  final int repeatCountInDay;
+  final bool isActive;
+  final List<Frequency> frequency;
+  final List<DateTime> completedDates;
 
-  const Habit(
-      {required this.id,
-      required this.daysCount,
-      required this.percent,
-      required this.name,
-      required this.didUserSucced,
-      required this.startDay,
-      required this.endDay,
-      required this.days});
+  const Habit({
+    required this.id,
+    required this.title,
+    required this.startDate,
+    required this.remainder,
+    required this.timerInDay,
+    required this.repeatCountInDay,
+    required this.isActive,
+    required this.frequency,
+    required this.completedDates,
+  });
 
-  const Habit.empty(
-      {this.id = -1,
-      this.daysCount = 0,
-      this.percent = 0,
-      this.name = "",
-      this.didUserSucced = false,
-      this.startDay = "",
-      this.endDay = "",
-      this.days = const {}});
+  const Habit.blank({
+    this.id = 0,
+    this.title = "",
+    this.startDate,
+    this.remainder,
+    this.timerInDay = 0,
+    this.repeatCountInDay = 0,
+    this.isActive = false,
+    this.frequency = const [],
+    this.completedDates = const [],
+  });
 
-  Habit copyWith(
-      {int? id,
-      int? daysCount,
-      double? percent,
-      String? name,
-      String? startDay,
-      String? endDay,
-      bool? didUserSucced,
-      Map<String, bool>? days}) {
+  Habit copyWith({
+    int? id,
+    String? title,
+    DateTime? startDate,
+    DateTime? remainder,
+    int? timerInDay,
+    int? repeatCountInDay,
+    bool? isActive,
+    List<Frequency>? frequency,
+    List<DateTime>? completedDates,
+  }) {
     return Habit(
-        id: id ?? this.id,
-        daysCount: daysCount ?? this.daysCount,
-        percent: percent ?? this.percent,
-        name: name ?? this.name,
-        didUserSucced: didUserSucced ?? this.didUserSucced,
-        startDay: startDay ?? this.startDay,
-        endDay: endDay ?? this.endDay,
-        days: days ?? this.days);
+      id: id ?? this.id,
+      title: title ?? this.title,
+      startDate: startDate ?? this.startDate,
+      remainder: remainder ?? this.remainder,
+      timerInDay: timerInDay ?? this.timerInDay,
+      repeatCountInDay: repeatCountInDay ?? this.repeatCountInDay,
+      isActive: isActive ?? this.isActive,
+      frequency: frequency ?? this.frequency,
+      completedDates: completedDates ?? this.completedDates,
+    );
   }
 
   factory Habit.fromJson(Map<String, dynamic> json) => _$HabitFromJson(json);
@@ -62,6 +78,13 @@ class Habit extends Equatable {
   Map<String, dynamic> toJson() => _$HabitToJson(this);
 
   @override
-  List<Object?> get props =>
-      [id, daysCount, name, startDay, endDay, didUserSucced, days];
+  List<Object?> get props => [
+        title,
+        startDate,
+        remainder,
+        frequency,
+        repeatCountInDay,
+        isActive,
+        completedDates,
+      ];
 }
