@@ -1,42 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:habit_repository/habit_repository.dart';
-import 'package:make_habits/bloc/main_screen_bloc/main_screen_bloc.dart';
-import 'package:make_habits/screens/action_list_screen.dart';
-import 'package:make_habits/screens/adding_screen.dart';
+import 'package:make_habits/cubit/cubits.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-class ActionOverView extends StatelessWidget {
-  const ActionOverView({super.key});
+import 'screens.dart';
+
+class HabitOverview extends StatelessWidget {
+  const HabitOverview({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          MainScreenBloc(RepositoryProvider.of<HabitRepository>(context))
-            ..add(MainScreenInitialEvent(index: ActionListScreen.onTapIndex)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: BlocListener<MainScreenBloc, MainScreenState>(
-          listener: (context, state) {
-            if (state is MainScreenErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                createSnackBar(
-                  text: state.e.toString(),
-                  color: const Color(0xffff3838),
-                ),
-              );
-            }
-          },
-          child: const _MainScreenForm(),
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: BlocListener<MainScreenCubit, MainScreenState>(
+        listener: (context, state) {
+          if (state.status == MainStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              createSnackBar(
+                text: state.exception.toString(),
+                color: const Color(0xffff3838),
+              ),
+            );
+          }
+        },
+        child: const _HabitOverviewForm(),
       ),
     );
   }
 }
 
-class _MainScreenForm extends StatelessWidget {
-  const _MainScreenForm({Key? key}) : super(key: key);
+class _HabitOverviewForm extends StatelessWidget {
+  const _HabitOverviewForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +52,7 @@ class _HabitInformationCard extends StatelessWidget {
   const _HabitInformationCard();
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainScreenBloc, MainScreenState>(
+    return BlocBuilder<MainScreenCubit, MainScreenState>(
         builder: (context, state) {
       return Card(
         elevation: 30.0,
@@ -78,14 +72,15 @@ class _HabitInformationCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      state.habit.name,
+                      state.habit.habitAttribute.title,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 10.0),
-                    Text("${state.habit.startDay} - ${state.habit.endDay}"),
+                    Text(
+                        "${state.habit.habitAttribute.startDate} - ${state.habit.habitAttribute.dueTime}"),
                   ],
                 ),
               ),
@@ -97,10 +92,10 @@ class _HabitInformationCard extends StatelessWidget {
   }
 }
 
-class _PercentIndicatorState extends State {
+class _PercentIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainScreenBloc, MainScreenState>(
+    return BlocBuilder<MainScreenCubit, MainScreenState>(
       builder: (context, state) {
         return Container(
           alignment: Alignment.center,
@@ -110,9 +105,9 @@ class _PercentIndicatorState extends State {
             animationDuration: 2000,
             radius: MediaQuery.of(context).size.width / 4,
             lineWidth: MediaQuery.of(context).size.width / 16,
-            percent: state.habit.percent / 100,
+            percent: state.completionRatio,
             center: Text(
-              "%${state.habit.percent.toStringAsFixed(1)}",
+              "%${(state.completionRatio * 100).toStringAsFixed(0)}",
               style: Theme.of(context).textTheme.displaySmall,
             ),
           ),
@@ -127,34 +122,30 @@ class _DayCheckBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainScreenBloc, MainScreenState>(
-        builder: (context, state) {
-      return Flexible(
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemCount: state.habit.daysCount,
-          itemBuilder: (context, index) {
-            return Row(
-              children: [
-                Text(state.habit.days.keys.elementAt(index)),
-                Checkbox(
-                  value: state.habit.days.values.elementAt(index),
-                  onChanged: (value) {},
-                ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-              ],
-            );
-          },
-        ),
-      );
-    });
-  }
-}
-
-class _PercentIndicator extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _PercentIndicatorState();
+    return BlocBuilder<MainScreenCubit, MainScreenState>(
+      builder: (context, state) {
+        return Flexible(
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            shrinkWrap: true,
+            itemCount: state.habit.dates.length,
+            itemBuilder: (context, index) {
+              return Row(
+                children: [
+                  Text(state.habit.dates[index].date),
+                  Checkbox(
+                    value: state.habit.dates[index].isDone,
+                    onChanged: (value) => context
+                        .read<MainScreenCubit>()
+                        .switchCheckBox(index, value!),
+                  ),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+                ],
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }

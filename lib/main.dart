@@ -1,14 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:local_storage_habits_api/local_storage_habits_api.dart';
 import 'package:make_habits/bootstap.dart';
+import 'package:sqflite_manager/sqflite_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final habitsApi =
-      LocalStorageHabitsApi(plugin: await SharedPreferences.getInstance());
+  final habitsApi = SqfliteManager();
 
   bootstrap(habitsApi: habitsApi);
 }

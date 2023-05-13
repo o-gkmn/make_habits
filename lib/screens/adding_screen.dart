@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:habit_repository/habit_repository.dart';
-import 'package:make_habits/assets/headings.dart';
-import 'package:make_habits/bloc/adding_screen_bloc/adding_screen_bloc.dart';
+import 'package:make_habits/cubit/cubits.dart';
 
 final days = List<String>.generate(31, (i) => (i + 1).toString());
 final months = List<String>.generate(12, (i) => (i + 1).toString());
 final years = List<String>.generate(12, (i) => (i + 2022).toString());
 
-final nameController = TextEditingController();
+final titleController = TextEditingController();
 
 String selectedFirstDay = DateTime.now().day.toString();
 String selectedFirstMonth = DateTime.now().month.toString();
@@ -18,7 +17,7 @@ String selectedLastMonth = DateTime.now().month.toString();
 String selectedLastYear = DateTime.now().year.toString();
 
 void resetPage() {
-  nameController.text = "";
+  titleController.text = "";
   selectedFirstDay = DateTime.now().day.toString();
   selectedFirstMonth = DateTime.now().month.toString();
   selectedFirstYear = DateTime.now().year.toString();
@@ -39,14 +38,12 @@ class AddingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AddingScreenBloc>(
-        create: (context) =>
-            AddingScreenBloc(RepositoryProvider.of<HabitRepository>(context))
-              ..add(AddingScreenInitialEvent()),
-        child: Scaffold(
-            appBar: AppBar(title: const Text(addingScreenAppTitle)),
-            body:
-                const Padding(padding: EdgeInsets.all(8.0), child: AddForm())));
+    return BlocProvider<AddHabitCubit>(
+      create: (context) => AddHabitCubit(
+        habitRepository: RepositoryProvider.of<HabitRepository>(context),
+      ),
+      child: const AddForm(),
+    );
   }
 }
 
@@ -55,18 +52,17 @@ class AddForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AddingScreenBloc, AddingScreenState>(
-      bloc: BlocProvider.of<AddingScreenBloc>(context),
+    return BlocListener<AddHabitCubit, AddHabitState>(
+      bloc: BlocProvider.of<AddHabitCubit>(context),
       listener: (context, state) {
-        if (state is AddingScreenErrorState) {
+        if (state.status == AddHabitStatus.error) {
           Color color = const Color(0xffff3838);
-          if (state.status == Status.succes) {
-            color = const Color(0xff3ae374);
-            resetPage();
-          }
-          ScaffoldMessenger.of(context).showSnackBar(createSnackBar(
-              text: state.printError(state.status), color: color));
-          context.read<AddingScreenBloc>().add(AddingScreenErrorEvent());
+          ScaffoldMessenger.of(context).showSnackBar(
+            createSnackBar(
+              text: state.exception.toString(),
+              color: color,
+            ),
+          );
         }
       },
       child: Padding(
@@ -74,7 +70,7 @@ class AddForm extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(flex: 1),
-              _NameInput(),
+              _TitleInput(),
               const SizedBox(height: 50),
               const Text("Başlangıç tarihi"),
               const SizedBox(height: 10),
@@ -124,19 +120,21 @@ class AddForm extends StatelessWidget {
   }
 }
 
-class _NameInput extends StatelessWidget {
+class _TitleInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return Container(
           padding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
           decoration: BoxDecoration(
               border: Border.all(color: Theme.of(context).primaryColor)),
           child: TextField(
-            controller: nameController,
+            controller: titleController,
             decoration: const InputDecoration(
-                border: InputBorder.none, labelText: 'Etkinlik ismi'),
+              border: InputBorder.none,
+              labelText: 'Etkinlik ismi',
+            ),
           ),
         );
       },
@@ -147,8 +145,8 @@ class _NameInput extends StatelessWidget {
 class _FirstDaySelectorState extends State {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
-      bloc: BlocProvider.of<AddingScreenBloc>(context),
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
+      bloc: BlocProvider.of<AddHabitCubit>(context),
       builder: (context, state) {
         return DropdownButton(
           underline: Container(
@@ -173,7 +171,7 @@ class _FirstDaySelectorState extends State {
 class _FirstMonthSelectorState extends State {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return DropdownButton(
           underline: Container(
@@ -198,7 +196,7 @@ class _FirstMonthSelectorState extends State {
 class _FirstYearSelectorState extends State {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return DropdownButton(
           underline: Container(
@@ -223,7 +221,7 @@ class _FirstYearSelectorState extends State {
 class _LastDaySelectorState extends State {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return DropdownButton(
           underline: Container(
@@ -248,7 +246,7 @@ class _LastDaySelectorState extends State {
 class _LastMonthSelectorState extends State {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return DropdownButton(
           underline: Container(
@@ -273,7 +271,7 @@ class _LastMonthSelectorState extends State {
 class _LastYearSelectorState extends State {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return DropdownButton(
           underline: Container(
@@ -298,20 +296,22 @@ class _LastYearSelectorState extends State {
 class _SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddingScreenBloc, AddingScreenState>(
+    return BlocBuilder<AddHabitCubit, AddHabitState>(
       builder: (context, state) {
         return ElevatedButton(
-            onPressed: () {
-              context.read<AddingScreenBloc>().add(AddingScreenSaveEvent(
-                  nameController.text,
-                  selectedFirstDay,
-                  selectedFirstMonth,
-                  selectedFirstYear,
-                  selectedLastDay,
-                  selectedLastMonth,
-                  selectedLastYear));
-            },
-            child: const Text("Kaydet"));
+          onPressed: () {
+            context.read<AddHabitCubit>().addHabit(
+                title: titleController.text,
+                firstDay: selectedFirstDay,
+                firstMonth: selectedFirstMonth,
+                firstYear: selectedFirstYear,
+                lastDay: selectedLastDay,
+                lastMonth: selectedLastMonth,
+                lastYear: selectedLastYear);
+            context.read<MainScreenCubit>().goToTab(0);
+          },
+          child: const Text("Kaydet"),
+        );
       },
     );
   }

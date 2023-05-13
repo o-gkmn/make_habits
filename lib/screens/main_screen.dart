@@ -1,9 +1,10 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:make_habits/assets/headings.dart';
-import 'package:make_habits/bloc/main_screen_cubit/main_screen_cubit.dart';
+import 'package:habit_repository/habit_repository.dart';
+import 'package:make_habits/cubit/cubits.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
+
 import 'screens.dart';
 
 class MainScreen extends StatelessWidget {
@@ -12,50 +13,53 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MainScreenCubit(),
+      create: (context) => MainScreenCubit(
+          habitRepository: RepositoryProvider.of<HabitRepository>(context)),
       child: BlocBuilder<MainScreenCubit, MainScreenState>(
         builder: (context, state) {
           return Scaffold(
-              appBar: AppBar(title: const Text(appName)),
-              bottomNavigationBar: BottomAppBar(
-                notchMargin: 10,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _bottomAppBar(context,
-                            icon: FluentSystemIcons.ic_fluent_home_regular,
-                            page: 0,
-                            label: "Ana Menü"),
-                        _bottomAppBar(context,
-                            icon: FluentSystemIcons
-                                .ic_fluent_checkbox_checked_regular,
-                            page: 1,
-                            label: "Günler"),
-                        _bottomAppBar(context,
-                            icon: FluentSystemIcons.ic_fluent_add_regular,
-                            page: 2,
-                            label: "Ekle"),
-                        _bottomAppBar(context,
-                            icon: FluentSystemIcons.ic_fluent_list_regular,
-                            page: 3,
-                            label: "Liste"),
-                      ]),
+            appBar: AppBar(title: const Text("Alışkanlık Edin")),
+            bottomNavigationBar: BottomAppBar(
+              notchMargin: 10,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _bottomAppBar(context,
+                        icon: FluentSystemIcons.ic_fluent_home_regular,
+                        page: 0,
+                        label: "Ana Menü"),
+                    _bottomAppBar(context,
+                        icon: FluentSystemIcons
+                            .ic_fluent_checkbox_checked_regular,
+                        page: 1,
+                        label: "Günler"),
+                    _bottomAppBar(context,
+                        icon: FluentSystemIcons.ic_fluent_add_regular,
+                        page: 2,
+                        label: "Ekle"),
+                    _bottomAppBar(context,
+                        icon: FluentSystemIcons.ic_fluent_list_regular,
+                        page: 3,
+                        label: "Liste"),
+                  ],
                 ),
               ),
-              body: PageView(
-                onPageChanged: context.read<MainScreenCubit>().animateToTab,
-                controller: state.controller,
-                physics: const BouncingScrollPhysics(),
-                children: const [
-                  ActionOverview(),
-                  DayTrackerScreen(),
-                  AddingScreen(),
-                  ActionListScreen(),
-                ],
-              ));
+            ),
+            body: PageView(
+              onPageChanged: context.read<MainScreenCubit>().animateToTab,
+              controller: state.controller,
+              physics: const BouncingScrollPhysics(),
+              children: const [
+                HabitOverview(),
+                DayTrackerScreen(),
+                AddingScreen(),
+                HabitListScreen(),
+              ],
+            ),
+          );
         },
       ),
     );
