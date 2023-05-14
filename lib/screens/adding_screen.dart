@@ -7,25 +7,6 @@ final days = List<String>.generate(31, (i) => (i + 1).toString());
 final months = List<String>.generate(12, (i) => (i + 1).toString());
 final years = List<String>.generate(12, (i) => (i + 2022).toString());
 
-final titleController = TextEditingController();
-
-String selectedFirstDay = DateTime.now().day.toString();
-String selectedFirstMonth = DateTime.now().month.toString();
-String selectedFirstYear = DateTime.now().year.toString();
-String selectedLastDay = DateTime.now().day.toString();
-String selectedLastMonth = DateTime.now().month.toString();
-String selectedLastYear = DateTime.now().year.toString();
-
-void resetPage() {
-  titleController.text = "";
-  selectedFirstDay = DateTime.now().day.toString();
-  selectedFirstMonth = DateTime.now().month.toString();
-  selectedFirstYear = DateTime.now().year.toString();
-  selectedLastDay = DateTime.now().day.toString();
-  selectedLastMonth = DateTime.now().month.toString();
-  selectedLastYear = DateTime.now().year.toString();
-}
-
 SnackBar createSnackBar({required String text, required Color color}) {
   return SnackBar(
     content: Text(text),
@@ -41,7 +22,14 @@ class AddingScreen extends StatelessWidget {
     return BlocProvider<AddHabitCubit>(
       create: (context) => AddHabitCubit(
         habitRepository: RepositoryProvider.of<HabitRepository>(context),
-      ),
+      )..emitDate(
+          selectedFirstDay: DateTime.now().day.toString(),
+          selectedFirstMonth: DateTime.now().month.toString(),
+          selectedFirstYear: DateTime.now().year.toString(),
+          selectedLastDay: DateTime.now().day.toString(),
+          selectedLastMonth: DateTime.now().month.toString(),
+          selectedLastYear: DateTime.now().year.toString(),
+        ),
       child: const AddForm(),
     );
   }
@@ -121,6 +109,8 @@ class AddForm extends StatelessWidget {
 }
 
 class _TitleInput extends StatelessWidget {
+  final titleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -131,6 +121,9 @@ class _TitleInput extends StatelessWidget {
               border: Border.all(color: Theme.of(context).primaryColor)),
           child: TextField(
             controller: titleController,
+            onEditingComplete: () => context
+                .read<AddHabitCubit>()
+                .emitDate(title: titleController.text),
             decoration: const InputDecoration(
               border: InputBorder.none,
               labelText: 'Etkinlik ismi',
@@ -142,7 +135,7 @@ class _TitleInput extends StatelessWidget {
   }
 }
 
-class _FirstDaySelectorState extends State {
+class _FirstDaySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -153,22 +146,19 @@ class _FirstDaySelectorState extends State {
             height: 2,
             color: Theme.of(context).primaryColor,
           ),
-          value: selectedFirstDay,
+          value: state.selectedFirstDay,
           items: days.map((e) {
             return DropdownMenuItem(value: e, child: Text(e.toString()));
           }).toList(),
-          onChanged: ((value) {
-            setState(() {
-              selectedFirstDay = value as String;
-            });
-          }),
+          onChanged: (String? value) =>
+              context.read<AddHabitCubit>().emitDate(selectedFirstDay: value),
         );
       },
     );
   }
 }
 
-class _FirstMonthSelectorState extends State {
+class _FirstMonthSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -178,22 +168,19 @@ class _FirstMonthSelectorState extends State {
             height: 2,
             color: Theme.of(context).primaryColor,
           ),
-          value: selectedFirstMonth,
+          value: state.selectedFirstMonth,
           items: months.map((e) {
             return DropdownMenuItem(value: e, child: Text(e.toString()));
           }).toList(),
-          onChanged: ((value) {
-            setState(() {
-              selectedFirstMonth = value as String;
-            });
-          }),
+          onChanged: (String? value) =>
+              context.read<AddHabitCubit>().emitDate(selectedFirstMonth: value),
         );
       },
     );
   }
 }
 
-class _FirstYearSelectorState extends State {
+class _FirstYearSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -203,22 +190,19 @@ class _FirstYearSelectorState extends State {
             height: 2,
             color: Theme.of(context).primaryColor,
           ),
-          value: selectedFirstYear,
+          value: state.selectedFirstYear,
           items: years.map((e) {
             return DropdownMenuItem(value: e, child: Text(e.toString()));
           }).toList(),
-          onChanged: ((value) {
-            setState(() {
-              selectedFirstYear = value as String;
-            });
-          }),
+          onChanged: (String? value) =>
+              context.read<AddHabitCubit>().emitDate(selectedFirstYear: value),
         );
       },
     );
   }
 }
 
-class _LastDaySelectorState extends State {
+class _LastDaySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -228,22 +212,19 @@ class _LastDaySelectorState extends State {
             height: 2,
             color: Theme.of(context).primaryColor,
           ),
-          value: selectedLastDay,
+          value: state.selectedLastDay,
           items: days.map((e) {
             return DropdownMenuItem(value: e, child: Text(e.toString()));
           }).toList(),
-          onChanged: ((value) {
-            setState(() {
-              selectedLastDay = value as String;
-            });
-          }),
+          onChanged: (String? value) =>
+              context.read<AddHabitCubit>().emitDate(selectedLastDay: value),
         );
       },
     );
   }
 }
 
-class _LastMonthSelectorState extends State {
+class _LastMonthSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -253,22 +234,19 @@ class _LastMonthSelectorState extends State {
             height: 2,
             color: Theme.of(context).primaryColor,
           ),
-          value: selectedLastMonth,
+          value: state.selectedLastMonth,
           items: months.map((e) {
             return DropdownMenuItem(value: e, child: Text(e.toString()));
           }).toList(),
-          onChanged: ((value) {
-            setState(() {
-              selectedLastMonth = value as String;
-            });
-          }),
+          onChanged: (String? value) =>
+              context.read<AddHabitCubit>().emitDate(selectedLastMonth: value),
         );
       },
     );
   }
 }
 
-class _LastYearSelectorState extends State {
+class _LastYearSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddHabitCubit, AddHabitState>(
@@ -278,15 +256,12 @@ class _LastYearSelectorState extends State {
             height: 2,
             color: Theme.of(context).primaryColor,
           ),
-          value: selectedLastYear,
+          value: state.selectedLastYear,
           items: years.map((e) {
             return DropdownMenuItem(value: e, child: Text(e.toString()));
           }).toList(),
-          onChanged: ((value) {
-            setState(() {
-              selectedLastYear = value as String;
-            });
-          }),
+          onChanged: (String? value) =>
+              context.read<AddHabitCubit>().emitDate(selectedLastYear: value),
         );
       },
     );
@@ -300,61 +275,12 @@ class _SaveButton extends StatelessWidget {
       builder: (context, state) {
         return ElevatedButton(
           onPressed: () {
-            context.read<AddHabitCubit>().addHabit(
-                title: titleController.text,
-                firstDay: selectedFirstDay,
-                firstMonth: selectedFirstMonth,
-                firstYear: selectedFirstYear,
-                lastDay: selectedLastDay,
-                lastMonth: selectedLastMonth,
-                lastYear: selectedLastYear);
+            context.read<AddHabitCubit>().addHabit();
             context.read<MainScreenCubit>().goToTab(0);
           },
           child: const Text("Kaydet"),
         );
       },
     );
-  }
-}
-
-class _FirstDaySelector extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _FirstDaySelectorState();
-  }
-}
-
-class _FirstMonthSelector extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _FirstMonthSelectorState();
-  }
-}
-
-class _FirstYearSelector extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _FirstYearSelectorState();
-  }
-}
-
-class _LastDaySelector extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _LastDaySelectorState();
-  }
-}
-
-class _LastMonthSelector extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _LastMonthSelectorState();
-  }
-}
-
-class _LastYearSelector extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _LastYearSelectorState();
   }
 }

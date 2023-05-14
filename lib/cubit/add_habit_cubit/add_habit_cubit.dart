@@ -11,19 +11,35 @@ class AddHabitCubit extends Cubit<AddHabitState> {
 
   AddHabitCubit({required HabitRepository habitRepository})
       : _habitRepository = habitRepository,
-        super(const AddHabitState(status: AddHabitStatus.initial));
+        super(
+          const AddHabitState(status: AddHabitStatus.initial),
+        );
 
-  void addHabit({
-    required String title,
-    required String firstDay,
-    required String firstMonth,
-    required String firstYear,
-    required String lastDay,
-    required String lastMonth,
-    required String lastYear,
-  }) async {
-    final startDate = "$firstDay.$firstMonth.$firstYear";
-    final dueDate = "$lastDay.$lastMonth.$lastYear";
+  void emitDate({
+    String? title,
+    String? selectedFirstDay,
+    String? selectedFirstMonth,
+    String? selectedFirstYear,
+    String? selectedLastDay,
+    String? selectedLastMonth,
+    String? selectedLastYear,
+  }) {
+    emit(state.copyWith(
+      title: title ?? state.title,
+      selectedFirstDay: selectedFirstDay ?? state.selectedFirstDay,
+      selectedFirstMonth: selectedFirstMonth ?? state.selectedFirstMonth,
+      selectedFirstYear: selectedFirstYear ?? state.selectedFirstYear,
+      selectedLastDay: selectedLastDay ?? state.selectedLastDay,
+      selectedLastMonth: selectedLastMonth ?? state.selectedLastMonth,
+      selectedLastYear: selectedLastYear ?? state.selectedLastYear,
+    ));
+  }
+
+  void addHabit() async {
+    final startDate =
+        "${state.selectedFirstDay}.${state.selectedFirstMonth}.${state.selectedFirstYear}";
+    final dueDate =
+        "${state.selectedLastDay}.${state.selectedLastMonth}.${state.selectedLastYear}";
 
     DateTime formatFirstDate = DateFormat("dd.MM.yyyy").parse(startDate);
     DateTime formatLastDate = DateFormat("dd.MM.yyyy").parse(dueDate);
@@ -34,7 +50,7 @@ class AddHabitCubit extends Cubit<AddHabitState> {
       emit(const AddHabitState(status: AddHabitStatus.error));
       throw Exception();
     }
-    if (title.isEmpty) {
+    if (state.title.isEmpty) {
       emit(const AddHabitState(status: AddHabitStatus.error));
       throw Exception();
     }
@@ -53,7 +69,7 @@ class AddHabitCubit extends Cubit<AddHabitState> {
 
     HabitAttribute habitAttribute = HabitAttribute(
         id: 0,
-        title: title,
+        title: state.title,
         startDate: startDate,
         dueTime: dueDate,
         howLongItWillTake: dayCount,
@@ -62,5 +78,15 @@ class AddHabitCubit extends Cubit<AddHabitState> {
     Habit habit = Habit(habitAttribute: habitAttribute, dates: dateList);
 
     await _habitRepository.insertHabit(habit);
+
+    emitDate(
+      title: "",
+      selectedFirstDay: DateTime.now().day.toString(),
+      selectedFirstMonth: DateTime.now().month.toString(),
+      selectedFirstYear: DateTime.now().year.toString(),
+      selectedLastDay: DateTime.now().day.toString(),
+      selectedLastMonth: DateTime.now().month.toString(),
+      selectedLastYear: DateTime.now().year.toString(),
+    );
   }
 }
